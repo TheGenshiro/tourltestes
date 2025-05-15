@@ -4,17 +4,24 @@
   <meta charset="UTF-8">
   <title>You Are an Idiot</title>
   <style>
-    body {
+    html, body {
+      margin: 0;
+      padding: 0;
       background: black;
-      color: white;
+      color: cyan;
       font-family: monospace;
-      text-align: center;
-      margin-top: 50px;
+      height: 100%;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
     }
 
     .idiot-message {
       font-size: 2rem;
       animation: glitch 0.3s infinite;
+      text-align: center;
     }
 
     @keyframes glitch {
@@ -22,55 +29,52 @@
       50% { color: lime; transform: scale(0.99) rotate(-0.5deg); }
       100% { color: cyan; transform: scale(1.02) rotate(0.3deg); }
     }
+
+    .done-message {
+      font-size: 1.5rem;
+      margin-top: 20px;
+    }
   </style>
 </head>
-<body>
-  <div class="idiot-message">you are an idiot <br> ☺ ☺ ☺</div>
+<body onclick="goFullscreen()">
+  <div class="idiot-message" id="msg">you are an idiot<br>☺ ☺ ☺</div>
+  <div class="done-message" id="done" style="display:none;">udah cukup ya...</div>
 
-  <!-- Suara prank -->
   <audio autoplay>
     <source src="https://www.myinstants.com/media/sounds/you-are-an-idiot.mp3" type="audio/mpeg">
-    Your browser does not support the audio tag.
   </audio>
 
   <script>
-    let count = 0;
-    const max = 10;
-
-    const interval = setInterval(() => {
-      if (count >= max) {
-        clearInterval(interval);
-        document.body.innerHTML += '<p style="margin-top:30px; font-size: 1.5rem;">udah cukup ya...</p>';
-        return;
+    function goFullscreen() {
+      const elem = document.documentElement;
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+      } else if (elem.webkitRequestFullscreen) {
+        elem.webkitRequestFullscreen();
+      } else if (elem.msRequestFullscreen) {
+        elem.msRequestFullscreen();
       }
 
-      const popup = window.open("", "", "width=300,height=200");
-      if (popup) {
-        popup.document.write(`
-          <style>
-            body {
-              background: black;
-              color: white;
-              font-family: monospace;
-              text-align: center;
-              margin-top: 50px;
-            }
-            .idiot-message {
-              font-size: 2rem;
-              animation: glitch 0.3s infinite;
-            }
-            @keyframes glitch {
-              0% { color: red; transform: scale(1.01) rotate(0.5deg); }
-              50% { color: lime; transform: scale(0.99) rotate(-0.5deg); }
-              100% { color: cyan; transform: scale(1.02) rotate(0.3deg); }
-            }
-          </style>
-          <div class="idiot-message">you are an idiot <br> ☺ ☺ ☺</div>
-        `);
-      }
+      // Munculin popup dummy selama 10 detik
+      let count = 0;
+      const interval = setInterval(() => {
+        if (count >= 10) {
+          clearInterval(interval);
+          document.getElementById('msg').style.display = 'none';
+          document.getElementById('done').style.display = 'block';
+          document.exitFullscreen?.();
+          return;
+        }
 
-      count++;
-    }, 1000);
+        window.open("", "", "width=200,height=150");
+        count++;
+      }, 1000);
+    }
+
+    // Auto klik kalau user gak tekan
+    setTimeout(() => {
+      goFullscreen();
+    }, 500);
   </script>
 </body>
 </html>
