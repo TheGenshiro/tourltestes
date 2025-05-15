@@ -1,80 +1,226 @@
-<!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
-  <meta charset="UTF-8">
-  <title>You Are an Idiot</title>
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      background: black;
-      color: cyan;
-      font-family: monospace;
-      height: 100%;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-    }
-
-    .idiot-message {
-      font-size: 2rem;
-      animation: glitch 0.3s infinite;
-      text-align: center;
-    }
-
-    @keyframes glitch {
-      0% { color: red; transform: scale(1.01) rotate(0.5deg); }
-      50% { color: lime; transform: scale(0.99) rotate(-0.5deg); }
-      100% { color: cyan; transform: scale(1.02) rotate(0.3deg); }
-    }
-
-    .done-message {
-      font-size: 1.5rem;
-      margin-top: 20px;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>Prank Super Ekstrem</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+  body, html {
+    margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden;
+    background-color: black;
+    font-family: 'Share Tech Mono', monospace, monospace;
+    -webkit-user-select:none; -moz-user-select:none; -ms-user-select:none; user-select:none;
+    -webkit-touch-callout:none; -webkit-tap-highlight-color: transparent;
+  }
+  #main-text {
+    color: #00ffff;
+    font-size: 5vw;
+    text-align: center;
+    user-select:none;
+    text-shadow:
+      0 0 5px #00ffff,
+      0 0 10px #00ffff,
+      0 0 20px #00ffff,
+      0 0 40px #00ffff;
+  }
+  #emoji-row {
+    font-size: 8vw;
+    text-align: center;
+    margin-top: 0.5rem;
+    user-select:none;
+  }
+  #extra-text {
+    color: white;
+    font-size: 4vw;
+    text-align: center;
+    margin-top: 2rem;
+    opacity: 0;
+    user-select:none;
+    transition: opacity 2s ease-in;
+  }
+  #extra-text.visible {
+    opacity: 1;
+  }
+  #flash-overlay {
+    position: fixed;
+    top:0; left:0; width:100%; height:100%;
+    pointer-events:none;
+    mix-blend-mode: screen;
+    z-index: 9999;
+    background-color: white;
+    opacity: 0;
+  }
+  #blocker {
+    position: fixed;
+    top:0; left:0; width:100%; height:100%;
+    z-index: 10000;
+    touch-action: none;
+    user-select:none;
+  }
+</style>
 </head>
-<body onclick="goFullscreen()">
-  <div class="idiot-message" id="msg">you are an idiot<br>☺ ☺ ☺</div>
-  <div class="done-message" id="done" style="display:none;">udah cukup ya...</div>
+<body class="flex flex-col justify-start items-center h-screen w-screen select-none overflow-hidden">
 
-  <audio autoplay>
-    <source src="https://www.myinstants.com/media/sounds/you-are-an-idiot.mp3" type="audio/mpeg">
-  </audio>
+<div id="flash-overlay"></div>
+<div id="blocker"></div>
 
-  <script>
-    function goFullscreen() {
-      const elem = document.documentElement;
-      if (elem.requestFullscreen) {
-        elem.requestFullscreen();
-      } else if (elem.webkitRequestFullscreen) {
-        elem.webkitRequestFullscreen();
-      } else if (elem.msRequestFullscreen) {
-        elem.msRequestFullscreen();
+<div class="mt-12 w-full max-w-full px-4">
+  <h1 id="main-text" aria-label="You are an idiot text in neon blue monospace font">you are an idiot</h1>
+  <div id="emoji-row" aria-label="Three smiling face emojis">😊 😊 😊</div>
+  <div id="extra-text" aria-live="polite" aria-atomic="true">udah cukup ya...</div>
+</div>
+
+<audio id="audio-loop" loop preload="auto" src="https://actions.google.com/sounds/v1/cartoon/boing.ogg"></audio>
+<audio id="audio-laugh" preload="auto" src="https://actions.google.com/sounds/v1/creatures/demon_laugh.ogg"></audio>
+
+<script>
+  // Prevent zoom and scaling on mobile
+  document.addEventListener('gesturestart', function (e) {
+    e.preventDefault();
+  });
+
+  // Request fullscreen immediately on load
+  async function requestFullscreen() {
+    const el = document.documentElement;
+    if (el.requestFullscreen) {
+      try {
+        await el.requestFullscreen({navigationUI: "hide"});
+      } catch(e) {
+        // ignore errors
       }
-
-      // Munculin popup dummy selama 10 detik
-      let count = 0;
-      const interval = setInterval(() => {
-        if (count >= 10) {
-          clearInterval(interval);
-          document.getElementById('msg').style.display = 'none';
-          document.getElementById('done').style.display = 'block';
-          document.exitFullscreen?.();
-          return;
-        }
-
-        window.open("", "", "width=200,height=150");
-        count++;
-      }, 1000);
+    } else if (el.webkitRequestFullscreen) {
+      try {
+        await el.webkitRequestFullscreen();
+      } catch(e) {}
     }
+  }
 
-    // Auto klik kalau user gak tekan
+  // Block user interaction for 10 seconds
+  function blockInteraction() {
+    const blocker = document.getElementById('blocker');
+    blocker.style.display = 'block';
+    // Prevent context menu
+    window.addEventListener('contextmenu', e => e.preventDefault());
+    // Prevent keyboard input
+    window.addEventListener('keydown', preventKey, true);
+    // Prevent touch events
+    blocker.addEventListener('touchstart', e => e.preventDefault(), {passive:false});
+    blocker.addEventListener('touchmove', e => e.preventDefault(), {passive:false});
+    blocker.addEventListener('touchend', e => e.preventDefault(), {passive:false});
+  }
+  function unblockInteraction() {
+    const blocker = document.getElementById('blocker');
+    blocker.style.display = 'none';
+    window.removeEventListener('contextmenu', e => e.preventDefault());
+    window.removeEventListener('keydown', preventKey, true);
+  }
+  function preventKey(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  // Prevent back button navigation
+  function preventBack() {
+    history.pushState(null, null, location.href);
+    window.addEventListener('popstate', function(event) {
+      history.pushState(null, null, location.href);
+    });
+  }
+
+  // Flash effect (stroboscope)
+  function startFlash(durationMs) {
+    const flash = document.getElementById('flash-overlay');
+    let on = false;
+    let interval = 80; // ~12.5 flashes per second
+    flash.style.opacity = '0';
+    flash.style.display = 'block';
+    let elapsed = 0;
+    const flashInterval = setInterval(() => {
+      on = !on;
+      flash.style.opacity = on ? '1' : '0';
+      elapsed += interval;
+      if (elapsed >= durationMs) {
+        clearInterval(flashInterval);
+        flash.style.opacity = '0';
+        flash.style.display = 'none';
+      }
+    }, interval);
+    return flashInterval;
+  }
+
+  // Fade in extra text
+  function fadeInExtraText() {
+    const extra = document.getElementById('extra-text');
+    extra.classList.add('visible');
+  }
+
+  // Play audio loop for 10 seconds
+  function playAudioLoop() {
+    const audio = document.getElementById('audio-loop');
+    audio.volume = 0.7;
+    audio.play();
+    return audio;
+  }
+
+  // Play demon laugh sound once
+  function playDemonLaugh() {
+    const laugh = document.getElementById('audio-laugh');
+    laugh.volume = 1;
+    laugh.play();
+  }
+
+  // Main prank sequence
+  async function startPrank() {
+    await requestFullscreen();
+    preventBack();
+    blockInteraction();
+
+    // Start flash for 4 seconds
+    const flashInterval = startFlash(4000);
+
+    // Play audio loop for 10 seconds
+    const audioLoop = playAudioLoop();
+
+    // After 3 seconds show extra text
     setTimeout(() => {
-      goFullscreen();
-    }, 500);
-  </script>
+      fadeInExtraText();
+    }, 3000);
+
+    // After 10 seconds stop audio, stop flash, unblock interaction, play laugh, then redirect
+    setTimeout(() => {
+      audioLoop.pause();
+      audioLoop.currentTime = 0;
+      clearInterval(flashInterval);
+      const flash = document.getElementById('flash-overlay');
+      flash.style.opacity = '0';
+      flash.style.display = 'none';
+      unblockInteraction();
+      playDemonLaugh();
+      // After demon laugh ends (~3.5s), redirect
+      setTimeout(() => {
+        window.location.href = 'https://google.com';
+      }, 3500);
+    }, 10000);
+  }
+
+  // On load start prank
+  window.addEventListener('load', () => {
+    startPrank();
+  });
+
+  // Hide browser UI on mobile by scrolling to top and disabling scroll
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      window.scrollTo(0, 1);
+    }, 100);
+  });
+
+  // Disable touchmove to prevent scrolling
+  window.addEventListener('touchmove', function(e) {
+    e.preventDefault();
+  }, {passive:false});
+</script>
 </body>
 </html>
