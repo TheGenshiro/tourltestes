@@ -1,226 +1,336 @@
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-<title>Prank Super Ekstrem</title>
+<title>Prank Fullscreen</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
-  body, html {
-    margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden;
+  @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+  html, body {
+    margin: 0; padding: 0; height: 100%; width: 100%;
+    overflow: hidden !important;
     background-color: black;
-    font-family: 'Share Tech Mono', monospace, monospace;
-    -webkit-user-select:none; -moz-user-select:none; -ms-user-select:none; user-select:none;
-    -webkit-touch-callout:none; -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+    pointer-events: none;
   }
-  #main-text {
+  body {
+    font-family: 'VT323', monospace, monospace;
+  }
+  #container {
+    pointer-events: auto;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+  #idiot-text {
+    font-size: 12vw;
+    font-weight: 900;
     color: #00ffff;
-    font-size: 5vw;
+    text-transform: uppercase;
     text-align: center;
-    user-select:none;
-    text-shadow:
-      0 0 5px #00ffff,
-      0 0 10px #00ffff,
-      0 0 20px #00ffff,
-      0 0 40px #00ffff;
+    line-height: 1;
+    letter-spacing: 0.1em;
+    filter:
+      drop-shadow(0 0 5px #00ffff)
+      drop-shadow(0 0 10px #00ffff)
+      drop-shadow(0 0 20px #00ffff)
+      drop-shadow(0 0 40px #00ffff);
+    animation: glitch 1.5s infinite;
+    user-select: none;
   }
-  #emoji-row {
-    font-size: 8vw;
+  #enough-text {
+    position: absolute;
+    top: 70%;
+    width: 100%;
     text-align: center;
-    margin-top: 0.5rem;
-    user-select:none;
-  }
-  #extra-text {
-    color: white;
-    font-size: 4vw;
-    text-align: center;
-    margin-top: 2rem;
+    font-size: 6vw;
+    font-weight: 700;
+    color: #00ffff;
     opacity: 0;
-    user-select:none;
-    transition: opacity 2s ease-in;
+    animation: glitch 1.5s infinite;
+    user-select: none;
   }
-  #extra-text.visible {
-    opacity: 1;
+  @keyframes glitch {
+    0% {
+      text-shadow:
+        2px 0 #00ffff,
+        -2px 0 #00ffff,
+        0 2px #00ffff,
+        0 -2px #00ffff;
+      transform: translate(0);
+    }
+    20% {
+      text-shadow:
+        2px 0 #00ffff,
+        -2px 0 #ff00ff,
+        0 2px #00ffff,
+        0 -2px #ff00ff;
+      transform: translate(-2px, 2px);
+    }
+    40% {
+      text-shadow:
+        2px 0 #ff00ff,
+        -2px 0 #00ffff,
+        0 2px #ff00ff,
+        0 -2px #00ffff;
+      transform: translate(2px, -2px);
+    }
+    60% {
+      text-shadow:
+        2px 0 #00ffff,
+        -2px 0 #ff00ff,
+        0 2px #00ffff,
+        0 -2px #ff00ff;
+      transform: translate(-2px, 2px);
+    }
+    80% {
+      text-shadow:
+        2px 0 #ff00ff,
+        -2px 0 #00ffff,
+        0 2px #ff00ff,
+        0 -2px #00ffff;
+      transform: translate(2px, -2px);
+    }
+    100% {
+      text-shadow:
+        2px 0 #00ffff,
+        -2px 0 #00ffff,
+        0 2px #00ffff,
+        0 -2px #00ffff;
+      transform: translate(0);
+    }
   }
-  #flash-overlay {
+  #strobe-overlay {
     position: fixed;
-    top:0; left:0; width:100%; height:100%;
-    pointer-events:none;
-    mix-blend-mode: screen;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    background-color: transparent;
     z-index: 9999;
-    background-color: white;
-    opacity: 0;
-  }
-  #blocker {
-    position: fixed;
-    top:0; left:0; width:100%; height:100%;
-    z-index: 10000;
-    touch-action: none;
-    user-select:none;
   }
 </style>
 </head>
-<body class="flex flex-col justify-start items-center h-screen w-screen select-none overflow-hidden">
-
-<div id="flash-overlay"></div>
-<div id="blocker"></div>
-
-<div class="mt-12 w-full max-w-full px-4">
-  <h1 id="main-text" aria-label="You are an idiot text in neon blue monospace font">you are an idiot</h1>
-  <div id="emoji-row" aria-label="Three smiling face emojis">😊 😊 😊</div>
-  <div id="extra-text" aria-live="polite" aria-atomic="true">udah cukup ya...</div>
+<body>
+<div id="container" tabindex="-1" aria-label="Prank fullscreen display with glitch text and strobe effect">
+  <div id="idiot-text" aria-live="assertive" aria-atomic="true">you are an idiot</div>
+  <div id="enough-text" aria-live="polite" aria-atomic="true">udah cukup ya...</div>
 </div>
+<div id="strobe-overlay" aria-hidden="true"></div>
 
-<audio id="audio-loop" loop preload="auto" src="https://actions.google.com/sounds/v1/cartoon/boing.ogg"></audio>
-<audio id="audio-laugh" preload="auto" src="https://actions.google.com/sounds/v1/creatures/demon_laugh.ogg"></audio>
+<audio id="audio-idiot" src="https://cdn.jsdelivr.net/gh/jbrown25/prank-assets/you-are-an-idiot.mp3" loop preload="auto"></audio>
+<audio id="audio-laugh" src="https://cdn.jsdelivr.net/gh/jbrown25/prank-assets/demonic-laugh.mp3" preload="auto"></audio>
 
 <script>
-  // Prevent zoom and scaling on mobile
-  document.addEventListener('gesturestart', function (e) {
-    e.preventDefault();
-  });
+(() => {
+  const container = document.getElementById('container');
+  const idiotText = document.getElementById('idiot-text');
+  const enoughText = document.getElementById('enough-text');
+  const strobeOverlay = document.getElementById('strobe-overlay');
+  const audioIdiot = document.getElementById('audio-idiot');
+  const audioLaugh = document.getElementById('audio-laugh');
 
-  // Request fullscreen immediately on load
-  async function requestFullscreen() {
-    const el = document.documentElement;
-    if (el.requestFullscreen) {
-      try {
-        await el.requestFullscreen({navigationUI: "hide"});
-      } catch(e) {
-        // ignore errors
-      }
-    } else if (el.webkitRequestFullscreen) {
-      try {
-        await el.webkitRequestFullscreen();
-      } catch(e) {}
+  // Disable scrolling and pointer events on body (already done in CSS)
+  // But container pointer-events: auto to allow audio play and focus
+
+  // History push loop to block back button
+  let historyPushInterval;
+  let strobeInterval;
+  let strobeOn = false;
+  let strobeCount = 0;
+  let strobeMaxCount = 50; // 5 seconds at 100ms interval
+
+  // Function to force fullscreen with fake user gesture
+  function forceFullscreen() {
+    // Try to request fullscreen on container
+    if (container.requestFullscreen) {
+      container.requestFullscreen().catch(() => {});
+    } else if (container.webkitRequestFullscreen) {
+      container.webkitRequestFullscreen();
+    } else if (container.msRequestFullscreen) {
+      container.msRequestFullscreen();
     }
   }
 
-  // Block user interaction for 10 seconds
-  function blockInteraction() {
-    const blocker = document.getElementById('blocker');
-    blocker.style.display = 'block';
+  // Because browsers require user gesture, try to fake it by triggering fullscreen on first touch or keydown
+  // But we want auto fullscreen asap, so we try to call it repeatedly on user interaction events
+  function tryFullscreen() {
+    forceFullscreen();
+  }
+
+  // Block back button and navigation for 10 seconds
+  function startBlockingBack() {
+    // Push state repeatedly every 100ms
+    historyPushInterval = setInterval(() => {
+      window.history.pushState(null, '', window.location.href);
+    }, 100);
+
+    // onpopstate to push state back
+    window.onpopstate = function (e) {
+      window.history.pushState(null, '', window.location.href);
+    };
+
+    // Prevent unload
+    window.onbeforeunload = function (e) {
+      e.preventDefault();
+      e.returnValue = '';
+      return '';
+    };
+
     // Prevent context menu
-    window.addEventListener('contextmenu', e => e.preventDefault());
-    // Prevent keyboard input
-    window.addEventListener('keydown', preventKey, true);
+    window.oncontextmenu = function (e) {
+      e.preventDefault();
+      return false;
+    };
+
+    // Prevent keydown for back keys and navigation keys
+    window.addEventListener('keydown', function (e) {
+      // Block Backspace, Alt+Left, Ctrl+W, Escape, F5, Ctrl+R, etc.
+      const blockedKeys = [
+        'Backspace', 'Escape', 'F5', 'F11', 'F12',
+        'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown',
+        'Tab', 'Enter'
+      ];
+      if (
+        blockedKeys.includes(e.key) ||
+        (e.altKey && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) ||
+        (e.ctrlKey && (e.key === 'w' || e.key === 'r' || e.key === 'W' || e.key === 'R'))
+      ) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    }, {capture: true, passive: false});
+
     // Prevent touch events
-    blocker.addEventListener('touchstart', e => e.preventDefault(), {passive:false});
-    blocker.addEventListener('touchmove', e => e.preventDefault(), {passive:false});
-    blocker.addEventListener('touchend', e => e.preventDefault(), {passive:false});
+    window.addEventListener('touchstart', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }, {capture: true, passive: false});
+
+    // Prevent visibility change to avoid leaving
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        window.history.pushState(null, '', window.location.href);
+      }
+    });
   }
-  function unblockInteraction() {
-    const blocker = document.getElementById('blocker');
-    blocker.style.display = 'none';
-    window.removeEventListener('contextmenu', e => e.preventDefault());
-    window.removeEventListener('keydown', preventKey, true);
+
+  // Strobe effect: flash white background quickly for 5 seconds
+  function startStrobe() {
+    strobeCount = 0;
+    strobeOn = false;
+    strobeInterval = setInterval(() => {
+      strobeOn = !strobeOn;
+      strobeOverlay.style.backgroundColor = strobeOn ? 'white' : 'transparent';
+      strobeCount++;
+      if (strobeCount >= strobeMaxCount) {
+        clearInterval(strobeInterval);
+        strobeOverlay.style.backgroundColor = 'transparent';
+      }
+    }, 100);
   }
-  function preventKey(e) {
+
+  // Show "udah cukup ya..." text with glitch effect after 3 seconds
+  function showEnoughText() {
+    enoughText.style.opacity = '1';
+  }
+
+  // Play audio loop for "you are an idiot"
+  function playAudioIdiot() {
+    audioIdiot.volume = 0.7;
+    audioIdiot.play().catch(() => {});
+  }
+
+  // Play demonic laugh jumpscare at end
+  function playLaugh() {
+    audioLaugh.volume = 1;
+    audioLaugh.play().catch(() => {});
+  }
+
+  // Stop all audio
+  function stopAllAudio() {
+    audioIdiot.pause();
+    audioIdiot.currentTime = 0;
+    audioLaugh.pause();
+    audioLaugh.currentTime = 0;
+  }
+
+  // Disable scrolling and pointer events on document and body (already done in CSS)
+  // But container pointer-events: auto to allow focus and audio play
+
+  // Focus container to enable keyboard events
+  container.setAttribute('tabindex', '0');
+  container.focus();
+
+  // Start prank sequence
+  function startPrank() {
+    tryFullscreen();
+    startBlockingBack();
+    playAudioIdiot();
+    startStrobe();
+
+    setTimeout(() => {
+      showEnoughText();
+    }, 3000);
+
+    setTimeout(() => {
+      clearInterval(historyPushInterval);
+      stopAllAudio();
+      // Play laugh jumpscare
+      playLaugh();
+      // After laugh ends or 2 seconds, redirect
+      setTimeout(() => {
+        // Remove event listeners to allow exit
+        window.onbeforeunload = null;
+        window.oncontextmenu = null;
+        window.onpopstate = null;
+        window.removeEventListener('keydown', preventAll, true);
+        window.removeEventListener('touchstart', preventAll, true);
+        window.location.href = 'https://google.com';
+      }, 2000);
+    }, 10000);
+  }
+
+  // Prevent all function for removing listeners later
+  function preventAll(e) {
     e.preventDefault();
     e.stopPropagation();
   }
 
-  // Prevent back button navigation
-  function preventBack() {
-    history.pushState(null, null, location.href);
-    window.addEventListener('popstate', function(event) {
-      history.pushState(null, null, location.href);
-    });
-  }
+  // Attach preventAll listeners for keydown and touchstart
+  window.addEventListener('keydown', preventAll, {capture: true, passive: false});
+  window.addEventListener('touchstart', preventAll, {capture: true, passive: false});
 
-  // Flash effect (stroboscope)
-  function startFlash(durationMs) {
-    const flash = document.getElementById('flash-overlay');
-    let on = false;
-    let interval = 80; // ~12.5 flashes per second
-    flash.style.opacity = '0';
-    flash.style.display = 'block';
-    let elapsed = 0;
-    const flashInterval = setInterval(() => {
-      on = !on;
-      flash.style.opacity = on ? '1' : '0';
-      elapsed += interval;
-      if (elapsed >= durationMs) {
-        clearInterval(flashInterval);
-        flash.style.opacity = '0';
-        flash.style.display = 'none';
-      }
-    }, interval);
-    return flashInterval;
-  }
-
-  // Fade in extra text
-  function fadeInExtraText() {
-    const extra = document.getElementById('extra-text');
-    extra.classList.add('visible');
-  }
-
-  // Play audio loop for 10 seconds
-  function playAudioLoop() {
-    const audio = document.getElementById('audio-loop');
-    audio.volume = 0.7;
-    audio.play();
-    return audio;
-  }
-
-  // Play demon laugh sound once
-  function playDemonLaugh() {
-    const laugh = document.getElementById('audio-laugh');
-    laugh.volume = 1;
-    laugh.play();
-  }
-
-  // Main prank sequence
-  async function startPrank() {
-    await requestFullscreen();
-    preventBack();
-    blockInteraction();
-
-    // Start flash for 4 seconds
-    const flashInterval = startFlash(4000);
-
-    // Play audio loop for 10 seconds
-    const audioLoop = playAudioLoop();
-
-    // After 3 seconds show extra text
-    setTimeout(() => {
-      fadeInExtraText();
-    }, 3000);
-
-    // After 10 seconds stop audio, stop flash, unblock interaction, play laugh, then redirect
-    setTimeout(() => {
-      audioLoop.pause();
-      audioLoop.currentTime = 0;
-      clearInterval(flashInterval);
-      const flash = document.getElementById('flash-overlay');
-      flash.style.opacity = '0';
-      flash.style.display = 'none';
-      unblockInteraction();
-      playDemonLaugh();
-      // After demon laugh ends (~3.5s), redirect
-      setTimeout(() => {
-        window.location.href = 'https://google.com';
-      }, 3500);
-    }, 10000);
-  }
-
-  // On load start prank
-  window.addEventListener('load', () => {
+  // Attempt to start prank ASAP
+  // Some browsers block autoplay audio and fullscreen without user gesture
+  // So listen for first user interaction to trigger fullscreen and audio
+  let prankStarted = false;
+  function tryStartPrank() {
+    if (prankStarted) return;
+    prankStarted = true;
     startPrank();
-  });
+    window.removeEventListener('touchstart', tryStartPrank);
+    window.removeEventListener('keydown', tryStartPrank);
+    window.removeEventListener('click', tryStartPrank);
+  }
 
-  // Hide browser UI on mobile by scrolling to top and disabling scroll
-  window.addEventListener('load', () => {
-    setTimeout(() => {
-      window.scrollTo(0, 1);
-    }, 100);
-  });
+  // Try to start prank immediately (some browsers allow)
+  tryStartPrank();
 
-  // Disable touchmove to prevent scrolling
-  window.addEventListener('touchmove', function(e) {
-    e.preventDefault();
-  }, {passive:false});
+  // Also listen for user interaction to start prank if not started
+  window.addEventListener('touchstart', tryStartPrank, {passive: false});
+  window.addEventListener('keydown', tryStartPrank, {passive: false});
+  window.addEventListener('click', tryStartPrank, {passive: false});
+})();
 </script>
 </body>
 </html>
